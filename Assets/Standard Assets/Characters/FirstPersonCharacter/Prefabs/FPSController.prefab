@@ -13,11 +13,12 @@ GameObject:
   - component: {fileID: 11400000}
   - component: {fileID: 5400000}
   - component: {fileID: 8200000}
+  - component: {fileID: 1730918363406502613}
   - component: {fileID: 2403064698376190508}
   - component: {fileID: 1116558490177502650}
   m_Layer: 0
   m_Name: FPSController
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -291,6 +292,19 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
+--- !u!114 &1730918363406502613
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 100000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e267a3a5cbc3c3e499c7b691ed5a5bf1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rb: {fileID: 0}
 --- !u!114 &2403064698376190508
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -303,7 +317,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b219034721c6eb249b6f511d77f179b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 1
 --- !u!114 &1116558490177502650
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -317,7 +330,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rewindTime: 4
-  isRewinding: 0
 --- !u!1 &100002
 GameObject:
   m_ObjectHideFlags: 0
@@ -457,8 +469,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fireRate: 0
-  ammo: 100
-  _isAutomatic: 0
+  shotSpeed: 600
+  ammo: 50
   bulletKey: 0
   bulletHoleTransform: {fileID: 692145492172025841}
 --- !u!1 &423110089334482070

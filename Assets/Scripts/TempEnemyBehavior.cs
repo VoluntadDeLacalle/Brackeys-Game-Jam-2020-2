@@ -54,21 +54,6 @@ public class TempEnemyBehavior : MonoBehaviour
 
     void Update()
     {
-        if (!GameManager.instance.isRewinding)
-        {
-            if (!nav.enabled)
-            {
-                nav.enabled = true;
-            }
-
-            FindNewPath();
-        }
-        else
-        {
-            if (nav.enabled)
-            {
-                nav.enabled = false;
-            }
-        }
+        
     }
 }

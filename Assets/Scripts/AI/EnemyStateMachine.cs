@@ -20,21 +20,28 @@ public class EnemyStateMachine : MonoBehaviour
     {
         Wait,
         Walk,
-        Attack
+        Attack,
+        Dodge
     }
 
     public StateType state = StateType.Wait;
 
     void Update()
     {
-        switch (state)
+        if (!GameManager.instance.isRewinding)
         {
-            case StateType.Walk:
-                enemy.Walking();
-                break;
-            case StateType.Attack:
-                enemy.Attacking();
-                break;
+            switch (state)
+            {
+                case StateType.Walk:
+                    enemy.Walking();
+                    break;
+                case StateType.Attack:
+                    enemy.Attacking();
+                    break;
+                case StateType.Dodge:
+                    enemy.Dodging();
+                    break;
+            }
         }
     }
 
@@ -49,10 +56,13 @@ public class EnemyStateMachine : MonoBehaviour
         switch (state)
         {
             case StateType.Walk:
-
+                enemy.WalkingEnter();
                 break;
             case StateType.Attack:
-
+                enemy.AttackingEnter();
+                break;
+            case StateType.Dodge:
+                enemy.DodgeEnter();
                 break;
         }
     }

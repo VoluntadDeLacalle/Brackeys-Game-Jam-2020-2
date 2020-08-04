@@ -5,10 +5,10 @@ using UnityEngine;
 public class Shooting : MonoBehaviour
 {
     public float fireRate = 0;
-    public float ammo = 0;
     private float maxFireRate = 0;
 
-    public bool _isAutomatic = false;
+    public float shotSpeed = 0;
+    public float ammo = 0;
 
     public ObjectPooler.Key bulletKey = ObjectPooler.Key.Bullets;
 
@@ -23,38 +23,40 @@ public class Shooting : MonoBehaviour
 
     void Fire()
     {
-        GameObject obj = ObjectPooler.GetPooler(bulletKey).GetPooledObject();
+        fireRate -= Time.deltaTime;
+        if (fireRate <= 0)
+        {
+            GameObject obj = ObjectPooler.GetPooler(bulletKey).GetPooledObject();
 
-        Vector3 targetDir = (transform.forward - transform.position);
-        Quaternion targetRotation = Quaternion.LookRotation(transform.forward, transform.up);
+            Vector3 targetDir = (transform.forward - transform.position);
+            Quaternion targetRotation = Quaternion.LookRotation(transform.forward, transform.up);
 
-        obj.transform.position = bulletHoleTransform.position;
-        obj.transform.rotation = targetRotation;
+            obj.transform.position = bulletHoleTransform.position;
+            obj.transform.rotation = targetRotation;
 
-        obj.SetActive(true);
+            obj.GetComponent<BulletBehavior>().speed = shotSpeed;
+
+            obj.SetActive(true);
+
+            fireRate = maxFireRate;
+            if (ammo != 0 || ammo != -1)
+            {
+                ammo--;
+            }
+        }
     }
 
     void Update()
     {
-        if (_isAutomatic)
+        if (Input.GetMouseButtonDown(0))
         {
-            if (Input.GetMouseButton(0))
+            if(ammo == -1) 
             {
-                if(ammo > 0)
-                {
-                    Fire();
-                }
+                Fire();
             }
-        }
-        else
-        {
-            if (Input.GetMouseButtonDown(0))
+            else if(ammo > 0)
             {
-                if (ammo > 0)
-                {
-                    Fire();
-                    ammo--;
-                }
+                Fire();
             }
         }
     }

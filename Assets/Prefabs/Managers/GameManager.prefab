@@ -43,4 +43,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c589c2104e7e817448fe327ae26e520e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  player: {fileID: 0}
   isRewinding: 0
+  infiniteWave: 1
+  timeToNextSpawn: 0
+  timeToNextWave: 0
+  waveTimeBuffer: 0
+  maxRewindTime: 4
+  maxNumberToSpawn: 0
+  currentlyspawnedNumber: 0
+  currentWaveKilledNumber: 0
+  currentWave: 0

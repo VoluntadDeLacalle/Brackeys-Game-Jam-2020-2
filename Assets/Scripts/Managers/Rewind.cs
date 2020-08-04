@@ -74,12 +74,15 @@ public class Rewind : MonoBehaviour
     private bool canRewind = false;
     private bool shouldDelete = false;
 
+    public event Action OnFinishedRewind;
+
     private List<TrackableData> TrackableDataList = new List<TrackableData>();
     private DataList trackedDataList = null;
 
     void Awake()
     {
-        maxRewindTime = rewindTime;
+        maxRewindTime = GameManager.instance.maxRewindTime;
+        rewindTime = maxRewindTime;
 
         lerper = GetComponent<Lerper>();
     }
@@ -141,11 +144,15 @@ public class Rewind : MonoBehaviour
         //Debug.Log("Finished");
         lerper.Stop();
         rewindTime = nextRewindTime;
-        Debug.Log(rewindTime);
         shouldDelete = false;
 
         canRewind = false;
         GameManager.instance.isRewinding = false;
+
+        if (OnFinishedRewind != null)
+        {
+            OnFinishedRewind();
+        }
     }
 
     void Update()
@@ -177,8 +184,6 @@ public class Rewind : MonoBehaviour
                 StopRewindTime(maxRewindTime);
             }
         }
-
-        Debug.Log(GameManager.instance.isRewinding);
 
         //this may get refactored later
         if (Input.GetMouseButtonUp(1) && GameManager.instance.isRewinding)

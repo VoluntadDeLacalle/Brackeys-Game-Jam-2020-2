@@ -6,12 +6,16 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance = null;
 
+    public Player player;
+
     public bool isRewinding = false;
     public bool infiniteWave = true;
 
     public float timeToNextSpawn = 0f;
     public float timeToNextWave = 0f;
     public float waveTimeBuffer = 0f;
+
+    public float maxRewindTime = 0f;
 
     private const float waveNumber1 = 0.000058f;
     private const float waveNumber2 = 0.074032f;

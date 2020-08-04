@@ -35,7 +35,7 @@ public class EnemySpawner : MonoBehaviour
 
         if (hasWaveStarted)
         {
-            if (Time.time - spawnBuffer >= GameManager.instance.timeToNextSpawn && GameManager.instance.spawnedNumber < GameManager.instance.fib[0])
+            /*if (Time.time - spawnBuffer >= GameManager.instance.timeToNextSpawn && GameManager.instance.spawnedNumber < GameManager.instance.fib[0])
             {
                 SpawnEnemy();
                 GameManager.instance.spawnedNumber++;
@@ -45,7 +45,7 @@ public class EnemySpawner : MonoBehaviour
             if (GameManager.instance.spawnedNumber == GameManager.instance.fib[0] && GameManager.instance.currentWaveKilledNumber == GameManager.instance.fib[0])
             {
                 hasWaveStarted = false;
-            }
+            }*/
         }
     }
 
