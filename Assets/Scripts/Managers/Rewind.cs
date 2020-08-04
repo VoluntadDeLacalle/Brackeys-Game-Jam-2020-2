@@ -74,8 +74,6 @@ public class Rewind : MonoBehaviour
     private bool canRewind = false;
     private bool shouldDelete = false;
 
-    public event Action OnFinishedRewind;
-
     private List<TrackableData> TrackableDataList = new List<TrackableData>();
     private DataList trackedDataList = null;
 
@@ -148,11 +146,6 @@ public class Rewind : MonoBehaviour
 
         canRewind = false;
         GameManager.instance.isRewinding = false;
-
-        if (OnFinishedRewind != null)
-        {
-            OnFinishedRewind();
-        }
     }
 
     void Update()

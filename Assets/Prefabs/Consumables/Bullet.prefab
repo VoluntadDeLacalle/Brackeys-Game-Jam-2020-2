@@ -141,7 +141,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 300
   lifeSpan: 5
-  enemyDodgeChance: 0.6
+  enemyDodgeChance: 0.8
+  tagOfShooter: 
 --- !u!54 &4259005835164652030
 Rigidbody:
   m_ObjectHideFlags: 0

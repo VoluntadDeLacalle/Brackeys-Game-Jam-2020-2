@@ -9,16 +9,21 @@ public class EnemyBehavior : MonoBehaviour
     [HideInInspector] public NavMeshObstacle navObj; 
     NavMeshAgent nav;
     Rewind rewind;
-    Shooting shoot;
+    EnemyShooting enemyShoot;
+    Health health;
 
     public float playerMoveDistance = 0f;
     public float startAttackDistance = 0f;
     public float stopAttackDistance = 0f;
     public float dodgeDistance = 0f;
 
+    private float originalNavSpeed = 0f;
+    private float originalNavAccel = 0f;
+
     [HideInInspector] public bool startMoving = false;
     private bool startDodging = false;
     private bool oneFrameDodge = false;
+    private bool isRewinding = false;
 
     private Vector3 currentPlayerDestination = Vector3.zero;
 
@@ -31,7 +36,12 @@ public class EnemyBehavior : MonoBehaviour
         nav = GetComponent<NavMeshAgent>();
 
         rewind = GetComponent<Rewind>();
-        rewind.OnFinishedRewind += EndOfRewind;
+
+        enemyShoot = GetComponent<EnemyShooting>();
+        health = GetComponent<Health>();
+
+        originalNavAccel = nav.acceleration;
+        originalNavSpeed = nav.speed;
     }
 
     void OnDrawGizmosSelected()
@@ -106,12 +116,15 @@ public class EnemyBehavior : MonoBehaviour
     public void AttackingEnter()
     {
         navObj.enabled = true;
+        enemyShoot.fireRate = Random.Range(enemyShoot.minFireRate, enemyShoot.maxFireRate);
     }
 
     public void Attacking()
     {
         PlayerMovementCheck();
         LookAtPlayer();
+
+        enemyShoot.Fire();
 
         if (Vector3.Distance(currentPlayerDestination, transform.position) > stopAttackDistance)
         {
@@ -120,8 +133,6 @@ public class EnemyBehavior : MonoBehaviour
 
             stateMachine.switchState(EnemyStateMachine.StateType.Walk);
         }
-        
-        Debug.Log("Attacking!");
     }
 
     public void SetBulletToDodge(GameObject chaser)
@@ -137,6 +148,8 @@ public class EnemyBehavior : MonoBehaviour
 
     public void Dodging()
     {
+        //LookAtPlayer();
+        
         if (!oneFrameDodge)
         {
             oneFrameDodge = true;
@@ -149,11 +162,27 @@ public class EnemyBehavior : MonoBehaviour
             startMoving = false;
 
             Vector3 dodgeDir = (transform.position - bulletToDodge.transform.position).normalized;
+            Vector3 crossProd = Vector3.Cross(transform.forward, -dodgeDir);
+            int sign = 0;
+            if (crossProd.y < 0)
+            {
+                sign = -1;
+            }
+            else if (crossProd.y > 0)
+            {
+                sign = 1;
+            }
+            else
+            {
+                sign = Random.Range(0, 2) * 2 - 1;
+            }
             
-            int sign = Random.Range(0, 2) * 2 - 1;    
-            dodgeDir = Quaternion.AngleAxis(Random.Range(sign * 45, sign * 90), Vector3.up) * dodgeDir;
+            dodgeDir = Quaternion.AngleAxis(sign * 45, Vector3.up) * dodgeDir;
+            dodgeDir += (transform.position - currentPlayerDestination).normalized;
             dodgeDir *= dodgeDistance;
 
+            nav.speed = nav.acceleration;
+            nav.acceleration *= 3;
             nav.SetDestination(transform.position + dodgeDir);
         }
 
@@ -166,47 +195,53 @@ public class EnemyBehavior : MonoBehaviour
         {
             if (!nav.hasPath)
             {
+                nav.speed = originalNavSpeed;
+                nav.acceleration = originalNavAccel;
+
                 stateMachine.switchState(EnemyStateMachine.StateType.Walk);
                 FindPath(GameManager.instance.player.transform);
             }
         }
     }
 
+    void StartOfRewind()
+    {
+        if (nav.enabled || navObj.enabled)
+        {
+            nav.enabled = false;
+            navObj.enabled = false;
+        }
+
+        isRewinding = true;
+        stateMachine.switchState(EnemyStateMachine.StateType.Wait);
+    }
+
     void EndOfRewind()
     {
-        if (!nav.enabled && stateMachine.state != EnemyStateMachine.StateType.Attack)
-        {
-            nav.enabled = true;
-
-            if (!nav.hasPath)
-            {
-                FindPath(GameManager.instance.player.transform);
-            }
-        }
-        else if (stateMachine.state == EnemyStateMachine.StateType.Attack)
-        {
-            navObj.enabled = false;
-            startMoving = true;
-
-            stateMachine.switchState(EnemyStateMachine.StateType.Walk);
-        }
+        startMoving = true;
+        stateMachine.switchState(EnemyStateMachine.StateType.Walk);
     }
 
     void HandleRewind()
     {
-        if(GameManager.instance.isRewinding)
+        if(!isRewinding && GameManager.instance.isRewinding)
         {
-            if (nav.enabled || navObj.enabled)
-            {
-                nav.enabled = false;
-                navObj.enabled = false;
-            }
+            StartOfRewind();
+        }
+
+        if (isRewinding && !GameManager.instance.isRewinding)
+        {
+            EndOfRewind();
+            isRewinding = false;
         }
     }
 
     void Update()
     {
         HandleRewind();
+
+        //Debug.Log("Nav:" + nav.enabled + " Obc: " + navObj.enabled);
+        Debug.Log(gameObject.name + ": " + nav.pathEndPosition);
 
         //For testing
         if (Input.GetKeyDown(KeyCode.T))
@@ -217,6 +252,6 @@ public class EnemyBehavior : MonoBehaviour
 
     void OnDisable()
     {
-
+        
     }
 }

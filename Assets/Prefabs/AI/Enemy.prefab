@@ -233,9 +233,10 @@ GameObject:
   - component: {fileID: 8469416253511507156}
   - component: {fileID: 2824131443001479924}
   - component: {fileID: 485475060107683653}
-  - component: {fileID: 3473930250085199705}
+  - component: {fileID: 5612807980168775602}
   - component: {fileID: 4326090427401763644}
   - component: {fileID: 7699421881153661942}
+  - component: {fileID: 1093697930604100080}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Enemy
@@ -329,7 +330,7 @@ NavMeshAgent:
   m_GameObject: {fileID: 8086924394398349605}
   m_Enabled: 1
   m_AgentTypeID: 0
-  m_Radius: 0.5
+  m_Radius: 1
   m_Speed: 3.5
   m_Acceleration: 8
   avoidancePriority: 50
@@ -338,7 +339,7 @@ NavMeshAgent:
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
-  m_Height: 2
+  m_Height: 4
   m_BaseOffset: 1
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
@@ -349,14 +350,14 @@ NavMeshObstacle:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8086924394398349605}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Shape: 0
   m_Extents: {x: 1, y: 2, z: 1}
   m_MoveThreshold: 0.1
   m_Carve: 1
   m_CarveOnlyStationary: 1
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: 1, z: 0}
   m_TimeToStationary: 0.5
 --- !u!114 &2824131443001479924
 MonoBehaviour:
@@ -386,11 +387,11 @@ MonoBehaviour:
   stateMachine: {fileID: 0}
   navObj: {fileID: 0}
   playerMoveDistance: 0.8
-  startAttackDistance: 7
-  stopAttackDistance: 8.5
+  startAttackDistance: 6.5
+  stopAttackDistance: 12
   dodgeDistance: 2
   startMoving: 0
---- !u!114 &3473930250085199705
+--- !u!114 &5612807980168775602
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -399,12 +400,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 8086924394398349605}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4798221084b8fe048bb9c5043e22527c, type: 3}
+  m_Script: {fileID: 11500000, guid: ab8d4485266f72a44b645c846dc6385f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fireRate: 0
+  minFireRate: 0.5
+  maxFireRate: 1.5
   shotSpeed: 600
-  ammo: 50
   bulletKey: 0
   bulletHoleTransform: {fileID: 2219870645453725974}
 --- !u!114 &4326090427401763644
@@ -432,3 +433,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b219034721c6eb249b6f511d77f179b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1093697930604100080
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8086924394398349605}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2fb32d260dff7404cbc26493159afb37, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  setHealth: 1
+  currentHealth: 0

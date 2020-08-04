@@ -13,6 +13,8 @@ public class BulletBehavior : MonoBehaviour
     [Range(0,1)]
     public float enemyDodgeChance = 0f;
 
+    public string tagOfShooter = "";
+
     List<GameObject> enemiesChecked = new List<GameObject>();
 
     void Awake()
@@ -40,12 +42,17 @@ public class BulletBehavior : MonoBehaviour
     void Update()
     {
         CheckCurentLifeSpan();
+        
+        if (tagOfShooter == "Player" && !GameManager.instance.isRewinding)
+        {
+            CheckEnemyCollision();
+        }
     }
 
     void CheckEnemyCollision()
     {
         RaycastHit rayHit;
-        if (Physics.Raycast(transform.position, rb.velocity.normalized, out rayHit, rb.velocity.magnitude))
+        if (Physics.Raycast(transform.position, rb.velocity.normalized, out rayHit))
         {
             if (rayHit.transform.gameObject.tag == "Enemy")
             {
@@ -77,13 +84,15 @@ public class BulletBehavior : MonoBehaviour
 
     void FixedUpdate()
     {
-        CheckEnemyCollision();
+        
     }
 
     void OnDisable()
     {
         rb.velocity = Vector3.zero;
         lifeSpan = maxLifeSpan;
+
+        tagOfShooter = "";
         enemiesChecked.Clear();
     }
 }

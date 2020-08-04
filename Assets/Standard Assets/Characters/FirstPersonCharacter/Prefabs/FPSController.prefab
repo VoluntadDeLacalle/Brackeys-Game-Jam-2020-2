@@ -468,9 +468,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4798221084b8fe048bb9c5043e22527c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fireRate: 0
+  fireRate: 0.2
   shotSpeed: 600
-  ammo: 50
+  ammo: 3
+  reloadAmmoTimer: 1.5
   bulletKey: 0
   bulletHoleTransform: {fileID: 692145492172025841}
 --- !u!1 &423110089334482070
