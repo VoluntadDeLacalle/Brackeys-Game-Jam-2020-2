@@ -72,6 +72,7 @@ public class Rewind : MonoBehaviour
     private float timeStartedRewinding = 0;
 
     private bool canRewind = false;
+    private bool isRewinding = false;
     private bool shouldDelete = false;
 
     private List<TrackableData> TrackableDataList = new List<TrackableData>();
@@ -132,6 +133,8 @@ public class Rewind : MonoBehaviour
     void RewindTime()
     {
         GameManager.instance.isRewinding = true;
+        isRewinding = true;
+        canRewind = false;
 
         lerper.SetDataList(trackedDataList);
         lerper.CommenceSimulation();
@@ -139,12 +142,13 @@ public class Rewind : MonoBehaviour
 
     void StopRewindTime(float nextRewindTime)
     {
-        //Debug.Log("Finished");
         lerper.Stop();
+        lerper.isSimulating = false;
         rewindTime = nextRewindTime;
         shouldDelete = false;
 
         canRewind = false;
+        isRewinding = false;
         GameManager.instance.isRewinding = false;
     }
 
@@ -160,15 +164,13 @@ public class Rewind : MonoBehaviour
             Record();
         }
 
-        if (Input.GetMouseButtonDown(1) && canRewind)
+        if (Input.GetMouseButtonDown(1) && canRewind && !isRewinding)
         {
             RewindTime();
             timeStartedRewinding = maxRewindTime;
-
-            //Debug.Log("Rewinding");
         }
 
-        if (GameManager.instance.isRewinding)
+        if (isRewinding && !canRewind)
         {
             timeStartedRewinding -= Time.deltaTime;
             if (timeStartedRewinding <= 0)
@@ -179,9 +181,21 @@ public class Rewind : MonoBehaviour
         }
 
         //this may get refactored later
-        if (Input.GetMouseButtonUp(1) && GameManager.instance.isRewinding)
+        if (Input.GetMouseButtonUp(1) && isRewinding)
         {
             StopRewindTime(Mathf.Clamp(Math.Abs(timeStartedRewinding - maxRewindTime), 0, maxRewindTime));
+        }
+
+        //IF REWIND DOESNT WORK BLAME THIS SHIT.
+
+        Player p;
+        if (TryGetComponent<Player>(out p) || transform.parent.TryGetComponent<Player>(out p))
+        {
+            GameManager.instance.PlayerRewindTime = rewindTime;
+        }
+        else
+        {
+            rewindTime = GameManager.instance.PlayerRewindTime;
         }
     }
 }

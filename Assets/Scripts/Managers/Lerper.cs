@@ -14,7 +14,7 @@ public class Lerper : MonoBehaviour
 
     private int count = 0;
     private float simulationTime;
-    private bool isSimulating = false;
+    public bool isSimulating = false;
 
     public void CommenceSimulation()
     {

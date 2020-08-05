@@ -44,12 +44,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 0}
+  rewind: {fileID: 0}
   isRewinding: 0
   infiniteWave: 1
   timeToNextSpawn: 0
   timeToNextWave: 0
   waveTimeBuffer: 0
-  maxRewindTime: 4
+  maxRewindTime: 10
   maxNumberToSpawn: 0
   currentlyspawnedNumber: 0
   currentWaveKilledNumber: 0

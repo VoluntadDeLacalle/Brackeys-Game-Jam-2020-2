@@ -405,6 +405,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   minFireRate: 0.5
   maxFireRate: 1.5
+  fireRate: 0
   shotSpeed: 600
   bulletKey: 0
   bulletHoleTransform: {fileID: 2219870645453725974}
@@ -433,6 +434,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b219034721c6eb249b6f511d77f179b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isSimulating: 0
 --- !u!114 &1093697930604100080
 MonoBehaviour:
   m_ObjectHideFlags: 0

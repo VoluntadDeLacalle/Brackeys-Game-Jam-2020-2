@@ -149,7 +149,6 @@ public class EnemyBehavior : MonoBehaviour
     public void Dodging()
     {
         //LookAtPlayer();
-        
         if (!oneFrameDodge)
         {
             oneFrameDodge = true;
@@ -241,7 +240,7 @@ public class EnemyBehavior : MonoBehaviour
         HandleRewind();
 
         //Debug.Log("Nav:" + nav.enabled + " Obc: " + navObj.enabled);
-        Debug.Log(gameObject.name + ": " + nav.pathEndPosition);
+        //Debug.Log(gameObject.name + ": " + nav.pathEndPosition);
 
         //For testing
         if (Input.GetKeyDown(KeyCode.T))

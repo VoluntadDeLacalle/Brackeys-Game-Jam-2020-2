@@ -7,6 +7,7 @@ public class GameManager : MonoBehaviour
     public static GameManager instance = null;
 
     public Player player;
+    public Rewind rewind;
 
     public bool isRewinding = false;
     public bool infiniteWave = true;
@@ -16,6 +17,7 @@ public class GameManager : MonoBehaviour
     public float waveTimeBuffer = 0f;
 
     public float maxRewindTime = 0f;
+    public float PlayerRewindTime = 0f;
 
     private const float waveNumber1 = 0.000058f;
     private const float waveNumber2 = 0.074032f;
@@ -37,6 +39,8 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+
+        rewind = GetComponent<Rewind>();
     }
 
     void GetNumberToSpawn()
