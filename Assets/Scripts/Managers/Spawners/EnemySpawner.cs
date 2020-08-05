@@ -35,32 +35,53 @@ public class EnemySpawner : MonoBehaviour
 
         if (hasWaveStarted)
         {
-            /*if (Time.time - spawnBuffer >= GameManager.instance.timeToNextSpawn && GameManager.instance.spawnedNumber < GameManager.instance.fib[0])
+            if (Time.time - spawnBuffer >= GameManager.instance.timeToNextSpawn)
             {
-                SpawnEnemy();
-                GameManager.instance.spawnedNumber++;
-                spawnBuffer = Time.time;
+                if (GameManager.instance.maxCanSpawnAtOnce > GameManager.instance.maxNumberToSpawn)
+                {
+                    if (GameManager.instance.totalSpawnedNumber < GameManager.instance.maxNumberToSpawn)
+                    {
+                        SpawnEnemy();
+                        GameManager.instance.currentlyspawnedNumber++;
+                        GameManager.instance.totalSpawnedNumber++;
+
+                        spawnBuffer = Time.time;
+                    }
+                }
+                else
+                {
+                    if (GameManager.instance.currentlyspawnedNumber < GameManager.instance.maxCanSpawnAtOnce &&
+                        GameManager.instance.totalSpawnedNumber < GameManager.instance.maxNumberToSpawn)
+                    {
+                        SpawnEnemy();
+                        GameManager.instance.currentlyspawnedNumber++;
+                        GameManager.instance.totalSpawnedNumber++;
+
+                        spawnBuffer = Time.time;
+                    }
+                }
             }
 
-            if (GameManager.instance.spawnedNumber == GameManager.instance.fib[0] && GameManager.instance.currentWaveKilledNumber == GameManager.instance.fib[0])
+            if (GameManager.instance.currentWaveKilledNumber == GameManager.instance.maxNumberToSpawn)
             {
                 hasWaveStarted = false;
-            }*/
+            }
         }
     }
 
     void CheckForWaveStart()
     {
 
-        if ((int)(GameManager.instance.timeToNextWave - (Time.timeSinceLevelLoad - GameManager.instance.waveTimeBuffer)) <= 0 && !hasWaveStarted)
+        if (Time.time - GameManager.instance.timeToNextWave >= GameManager.instance.waveTimeBuffer && !hasWaveStarted)
         {
             spawnBuffer = Time.time;
 
-            if ((GameManager.instance.currentWave + 1) % waveLaneIncrease == 0)
+            if ((GameManager.instance.currentWave) % waveLaneIncrease == 0)
             {
                 EnableSpawnHelper();
             }
 
+            GameManager.instance.timeToNextSpawn = Random.Range(GameManager.instance.minTimeToNextSpawn, GameManager.instance.maxTimeToNextSpawn);
             hasWaveStarted = true;
         }
     }
@@ -75,11 +96,11 @@ public class EnemySpawner : MonoBehaviour
 
         pooledObj.transform.position = spawnDict[activeSpawnHelpers[rand]].spawnPoint.position;
 
-        Quaternion targetRotation = Quaternion.LookRotation(spawnDict[activeSpawnHelpers[rand]].wayPoint.position);
+        Quaternion targetRotation = Quaternion.LookRotation((GameManager.instance.player.transform.position - pooledObj.transform.position).normalized);
         pooledObj.transform.rotation = targetRotation;
 
         pooledObj.SetActive(true);
-        //pooledObj.GetComponent<EnemyBehavior>().FindPath(spawnDict[activeSpawnHelpers[rand]].wayPoint);
+        pooledObj.GetComponent<EnemyBehavior>().FindPath(GameManager.instance.player.transform);
     }
 
     void EnableSpawnHelper()

@@ -70,13 +70,14 @@ public class Rewind : MonoBehaviour
     public float rewindTime = 0;
     private float maxRewindTime = 0;
     private float timeStartedRewinding = 0;
+    private float rewindTemp = 0;
 
     private bool canRewind = false;
     private bool isRewinding = false;
     private bool shouldDelete = false;
 
-    private List<TrackableData> TrackableDataList = new List<TrackableData>();
-    private DataList trackedDataList = null;
+    public List<TrackableData> TrackableDataList = new List<TrackableData>();
+    public DataList trackedDataList = null;
 
     void Awake()
     {
@@ -84,6 +85,30 @@ public class Rewind : MonoBehaviour
         rewindTime = maxRewindTime;
 
         lerper = GetComponent<Lerper>();
+    }
+
+    void OnEnable()
+    {
+        canRewind = false;
+        isRewinding = false;
+        shouldDelete = false;
+
+        rewindTemp = maxRewindTime;
+
+        trackedDataList.dataList.Clear();
+        TrackableDataList.Add(new TrackableData()
+        {
+            position = new SerializableVector(gameObject.transform.position),
+            rotation = new SerializableQuaternion(gameObject.transform.rotation),
+            timeSinceStart = 0
+        });
+
+        TrackableDataList.Add(new TrackableData()
+        {
+            position = new SerializableVector(gameObject.transform.position),
+            rotation = new SerializableQuaternion(gameObject.transform.rotation),
+            timeSinceStart = 0
+        });
     }
 
     void Record()
@@ -122,10 +147,15 @@ public class Rewind : MonoBehaviour
     void BuildRewindBuffer()
     {
         rewindTime -= Time.deltaTime;
-            
+        rewindTemp -= Time.deltaTime;
+
         if (rewindTime <= 0)
         {
-            shouldDelete = true;
+            if (rewindTemp <= 0)
+            {
+                shouldDelete = true;
+            }
+            
             canRewind = true;
         }
     }
@@ -154,12 +184,12 @@ public class Rewind : MonoBehaviour
 
     void Update()
     {
-        if (!shouldDelete)
+        if (!shouldDelete && !isRewinding)
         {
             BuildRewindBuffer();
         }
 
-        if (!GameManager.instance.isRewinding)
+        if (!isRewinding && gameObject.activeSelf)
         {
             Record();
         }
@@ -186,7 +216,7 @@ public class Rewind : MonoBehaviour
             StopRewindTime(Mathf.Clamp(Math.Abs(timeStartedRewinding - maxRewindTime), 0, maxRewindTime));
         }
 
-        //IF REWIND DOESNT WORK BLAME THIS SHIT.
+        //IF REWIND DOESNT WORK BLAME THIS.
 
         Player p;
         if (TryGetComponent<Player>(out p) || transform.parent.TryGetComponent<Player>(out p))

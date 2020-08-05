@@ -32,8 +32,8 @@ public class EnemyShooting : MonoBehaviour
             obj.transform.position = bulletHoleTransform.position;
             obj.transform.rotation = targetRotation;
 
-            obj.GetComponent<BulletBehavior>().speed = shotSpeed;
-            obj.GetComponent<BulletBehavior>().tagOfShooter = gameObject.tag;
+            obj.GetComponentInChildren<BulletBehavior>().speed = shotSpeed;
+            obj.GetComponentInChildren<BulletBehavior>().tagOfShooter = "Enemy";
 
             obj.SetActive(true);
 

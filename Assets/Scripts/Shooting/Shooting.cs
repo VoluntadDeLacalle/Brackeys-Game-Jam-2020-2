@@ -32,14 +32,14 @@ public class Shooting : MonoBehaviour
     {
         GameObject obj = ObjectPooler.GetPooler(bulletKey).GetPooledObject();
 
-        Vector3 targetDir = (transform.forward - transform.position);
-        Quaternion targetRotation = Quaternion.LookRotation(transform.forward, transform.up);
+        Vector3 targetDir = ((Camera.main.ViewportToWorldPoint(new Vector3(.5f, .5f, 10))) - bulletHoleTransform.position).normalized;
+        Quaternion targetRotation = Quaternion.LookRotation(targetDir);
 
         obj.transform.position = bulletHoleTransform.position;
         obj.transform.rotation = targetRotation;
 
-        obj.GetComponent<BulletBehavior>().speed = shotSpeed;
-        obj.GetComponent<BulletBehavior>().tagOfShooter = "Player";
+        obj.GetComponentInChildren<BulletBehavior>().speed = shotSpeed;
+        obj.GetComponentInChildren<BulletBehavior>().tagOfShooter = "Player";
 
         obj.SetActive(true);
             

@@ -61,7 +61,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d4195d7fc51471144a3a2a67a0bc179d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pooledAmount: 20
+  pooledAmount: 5
   willGrow: 1
-  key: 0
-  pooledObject: {fileID: 0}
+  key: 1
+  pooledObject: {fileID: 8086924394398349605, guid: 64e142ec76416cd428a140e980f43b2b,
+    type: 3}

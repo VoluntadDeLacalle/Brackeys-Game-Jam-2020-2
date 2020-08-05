@@ -17,6 +17,8 @@ public class BulletBehavior : MonoBehaviour
 
     List<GameObject> enemiesChecked = new List<GameObject>();
 
+    private bool canCheckCollision = true;
+
     void Awake()
     {
         rb = GetComponent<Rigidbody>();
@@ -43,7 +45,7 @@ public class BulletBehavior : MonoBehaviour
     {
         CheckCurentLifeSpan();
         
-        if (tagOfShooter == "Player" && !GameManager.instance.isRewinding)
+        if (tagOfShooter == "Player" && !GameManager.instance.isRewinding && canCheckCollision)
         {
             CheckEnemyCollision();
         }
@@ -69,7 +71,7 @@ public class BulletBehavior : MonoBehaviour
 
                 if (rand < enemyDodgeChance)
                 {
-                    EnemyBehavior enemy = rayHit.transform.gameObject.GetComponent<EnemyBehavior>();
+                    EnemyBehavior enemy = rayHit.transform.gameObject.GetComponentInParent<EnemyBehavior>();
 
                     enemy.SetBulletToDodge(this.gameObject);
 
@@ -82,8 +84,34 @@ public class BulletBehavior : MonoBehaviour
         }
     }
 
-    void FixedUpdate()
+    void OnTriggerEnter(Collider other)
     {
+        if (canCheckCollision)
+        {
+            if (other.gameObject.tag == "Enemy" && tagOfShooter == "Player")
+            {
+                other.gameObject.GetComponentInParent<EnemyBehavior>().health.TakeDamage(1);
+                canCheckCollision = false;
+                gameObject.SetActive(false);
+            }
+            else if (other.gameObject.tag == "Player" && tagOfShooter == "Enemy")
+            {
+                other.gameObject.GetComponentInParent<Player>().health.TakeDamage(1);
+                canCheckCollision = false;
+                gameObject.SetActive(false);
+            }
+            else if (other.gameObject.tag == "Bullet")
+            {
+
+            }
+            else if (other.gameObject.tag != "Player" && other.gameObject.tag != "Enemy")
+            {
+                canCheckCollision = false;
+                gameObject.SetActive(false);
+            }
+
+            
+        }
         
     }
 
@@ -91,6 +119,8 @@ public class BulletBehavior : MonoBehaviour
     {
         rb.velocity = Vector3.zero;
         lifeSpan = maxLifeSpan;
+
+        canCheckCollision = true;
 
         tagOfShooter = "";
         enemiesChecked.Clear();

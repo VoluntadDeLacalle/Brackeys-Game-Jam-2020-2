@@ -6,11 +6,11 @@ using UnityEngine.AI;
 public class EnemyBehavior : MonoBehaviour
 {
     [HideInInspector] public EnemyStateMachine stateMachine;
-    [HideInInspector] public NavMeshObstacle navObj; 
+    [HideInInspector] public NavMeshObstacle navObj;
+    [HideInInspector] public Health health;
     NavMeshAgent nav;
     Rewind rewind;
     EnemyShooting enemyShoot;
-    Health health;
 
     public float playerMoveDistance = 0f;
     public float startAttackDistance = 0f;
@@ -24,6 +24,7 @@ public class EnemyBehavior : MonoBehaviour
     private bool startDodging = false;
     private bool oneFrameDodge = false;
     private bool isRewinding = false;
+    private bool isAlive = true;
 
     private Vector3 currentPlayerDestination = Vector3.zero;
 
@@ -59,6 +60,16 @@ public class EnemyBehavior : MonoBehaviour
     void OnEnable()
     {
         startMoving = true;
+        startDodging = false;
+        oneFrameDodge = false;
+        isRewinding = false;
+        isAlive = true;
+
+        nav.speed = originalNavSpeed;
+        nav.acceleration = originalNavAccel;
+
+        health.ResetHealth();
+        health.OnDeath += OnEnemyDeath;
     }
 
     public void PlayerMovementCheck()
@@ -211,6 +222,9 @@ public class EnemyBehavior : MonoBehaviour
             navObj.enabled = false;
         }
 
+        nav.speed = originalNavSpeed;
+        nav.acceleration = originalNavAccel;
+
         isRewinding = true;
         stateMachine.switchState(EnemyStateMachine.StateType.Wait);
     }
@@ -238,19 +252,33 @@ public class EnemyBehavior : MonoBehaviour
     void Update()
     {
         HandleRewind();
+    }
 
-        //Debug.Log("Nav:" + nav.enabled + " Obc: " + navObj.enabled);
-        //Debug.Log(gameObject.name + ": " + nav.pathEndPosition);
-
-        //For testing
-        if (Input.GetKeyDown(KeyCode.T))
+    void OnEnemyDeath()
+    {
+        if (isAlive)
         {
-            FindPath(GameManager.instance.player.transform);
+            health.OnDeath -= OnEnemyDeath;
+
+            Debug.Log("Dead.");
+            GameManager.instance.currentWaveKilledNumber++;
+            GameManager.instance.currentlyspawnedNumber--;
+            isAlive = false;
+
+            gameObject.SetActive(false);
         }
     }
 
     void OnDisable()
     {
-        
+        //for (int i = 0; i < rewind.trackedDataList.dataList.Count; i++)
+        //{
+        //    rewind.trackedDataList.dataList.RemoveAt(0);
+        //}
+        ////rewind.trackedDataList.dataList.Reverse();
+
+        nav.enabled = true;
+        navObj.enabled = false;
+        stateMachine.switchState(EnemyStateMachine.StateType.Wait);
     }
 }

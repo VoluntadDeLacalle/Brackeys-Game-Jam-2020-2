@@ -5,5 +5,4 @@ using UnityEngine;
 public class SpawnHelper : MonoBehaviour
 {
     public Transform spawnPoint;
-    public Transform wayPoint;
 }
