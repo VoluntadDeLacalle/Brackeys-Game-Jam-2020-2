@@ -17,7 +17,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         [SerializeField] private float m_JumpSpeed;
         [SerializeField] private float m_StickToGroundForce;
         [SerializeField] private float m_GravityMultiplier;
-        [SerializeField] private MouseLook m_MouseLook;
+        [SerializeField] public MouseLook m_MouseLook;
         [SerializeField] private bool m_UseFovKick;
         [SerializeField] private FOVKick m_FovKick = new FOVKick();
         [SerializeField] private bool m_UseHeadBob;
@@ -28,7 +28,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         [SerializeField] private AudioClip m_JumpSound;           // the sound played when character leaves the ground.
         [SerializeField] private AudioClip m_LandSound;           // the sound played when character touches back on ground.
 
-        private Camera m_Camera;
+        public Camera m_Camera;
         private bool m_Jump;
         private float m_YRotation;
         private Vector2 m_Input;
@@ -41,6 +41,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private float m_NextStep;
         private bool m_Jumping;
         private AudioSource m_AudioSource;
+
+        private bool isRewinding = false;
 
         // Use this for initialization
         private void Start()
@@ -57,30 +59,61 @@ namespace UnityStandardAssets.Characters.FirstPerson
 			m_MouseLook.Init(transform , m_Camera.transform);
         }
 
+        //Gavin Stuff
+
+        void StartOfRewind()
+        {
+            isRewinding = true;
+        }
+
+        void EndOfRewind()
+        {
+            m_MouseLook.Init(transform, m_Camera.transform);
+        }
+
+        void HandleRewind()
+        {
+            if (!isRewinding && GameManager.instance.isRewinding)
+            {
+                StartOfRewind();
+            }
+
+            if (isRewinding && !GameManager.instance.isRewinding)
+            {
+                EndOfRewind();
+                isRewinding = false;
+            }
+        }
+
 
         // Update is called once per frame
         private void Update()
         {
-            RotateView();
-            // the jump state needs to read here to make sure it is not missed
-            if (!m_Jump)
-            {
-                m_Jump = CrossPlatformInputManager.GetButtonDown("Jump");
-            }
+            HandleRewind();
 
-            if (!m_PreviouslyGrounded && m_CharacterController.isGrounded)
+            if (!GameManager.instance.isRewinding)
             {
-                StartCoroutine(m_JumpBob.DoBobCycle());
-                PlayLandingSound();
-                m_MoveDir.y = 0f;
-                m_Jumping = false;
-            }
-            if (!m_CharacterController.isGrounded && !m_Jumping && m_PreviouslyGrounded)
-            {
-                m_MoveDir.y = 0f;
-            }
+                RotateView();
+                // the jump state needs to read here to make sure it is not missed
+                if (!m_Jump)
+                {
+                    m_Jump = CrossPlatformInputManager.GetButtonDown("Jump");
+                }
 
-            m_PreviouslyGrounded = m_CharacterController.isGrounded;
+                if (!m_PreviouslyGrounded && m_CharacterController.isGrounded)
+                {
+                    StartCoroutine(m_JumpBob.DoBobCycle());
+                    PlayLandingSound();
+                    m_MoveDir.y = 0f;
+                    m_Jumping = false;
+                }
+                if (!m_CharacterController.isGrounded && !m_Jumping && m_PreviouslyGrounded)
+                {
+                    m_MoveDir.y = 0f;
+                }
+
+                m_PreviouslyGrounded = m_CharacterController.isGrounded;
+            }
         }
 
 
@@ -94,43 +127,47 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         private void FixedUpdate()
         {
-            float speed;
-            GetInput(out speed);
-            // always move along the camera forward as it is the direction that it being aimed at
-            Vector3 desiredMove = transform.forward*m_Input.y + transform.right*m_Input.x;
-
-            // get a normal for the surface that is being touched to move along it
-            RaycastHit hitInfo;
-            Physics.SphereCast(transform.position, m_CharacterController.radius, Vector3.down, out hitInfo,
-                               m_CharacterController.height/2f, Physics.AllLayers, QueryTriggerInteraction.Ignore);
-            desiredMove = Vector3.ProjectOnPlane(desiredMove, hitInfo.normal).normalized;
-
-            m_MoveDir.x = desiredMove.x*speed;
-            m_MoveDir.z = desiredMove.z*speed;
-
-
-            if (m_CharacterController.isGrounded)
+            if (!GameManager.instance.isRewinding)
             {
-                m_MoveDir.y = -m_StickToGroundForce;
+                float speed;
 
-                if (m_Jump)
+                GetInput(out speed);
+                // always move along the camera forward as it is the direction that it being aimed at
+                Vector3 desiredMove = transform.forward * m_Input.y + transform.right * m_Input.x;
+
+                // get a normal for the surface that is being touched to move along it
+                RaycastHit hitInfo;
+                Physics.SphereCast(transform.position, m_CharacterController.radius, Vector3.down, out hitInfo,
+                                   m_CharacterController.height / 2f, Physics.AllLayers, QueryTriggerInteraction.Ignore);
+                desiredMove = Vector3.ProjectOnPlane(desiredMove, hitInfo.normal).normalized;
+
+                m_MoveDir.x = desiredMove.x * speed;
+                m_MoveDir.z = desiredMove.z * speed;
+
+
+                if (m_CharacterController.isGrounded)
                 {
-                    m_MoveDir.y = m_JumpSpeed;
-                    PlayJumpSound();
-                    m_Jump = false;
-                    m_Jumping = true;
+                    m_MoveDir.y = -m_StickToGroundForce;
+
+                    if (m_Jump)
+                    {
+                        m_MoveDir.y = m_JumpSpeed;
+                        PlayJumpSound();
+                        m_Jump = false;
+                        m_Jumping = true;
+                    }
                 }
-            }
-            else
-            {
-                m_MoveDir += Physics.gravity*m_GravityMultiplier*Time.fixedDeltaTime;
-            }
-            m_CollisionFlags = m_CharacterController.Move(m_MoveDir*Time.fixedDeltaTime);
+                else
+                {
+                    m_MoveDir += Physics.gravity * m_GravityMultiplier * Time.fixedDeltaTime;
+                }
+                m_CollisionFlags = m_CharacterController.Move(m_MoveDir * Time.fixedDeltaTime);
 
-            ProgressStepCycle(speed);
-            UpdateCameraPosition(speed);
+                ProgressStepCycle(speed);
+                UpdateCameraPosition(speed);
 
-            m_MouseLook.UpdateCursorLock();
+                m_MouseLook.UpdateCursorLock();
+            }
         }
 
 

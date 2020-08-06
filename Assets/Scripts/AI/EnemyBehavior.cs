@@ -271,12 +271,6 @@ public class EnemyBehavior : MonoBehaviour
 
     void OnDisable()
     {
-        //for (int i = 0; i < rewind.trackedDataList.dataList.Count; i++)
-        //{
-        //    rewind.trackedDataList.dataList.RemoveAt(0);
-        //}
-        ////rewind.trackedDataList.dataList.Reverse();
-
         nav.enabled = true;
         navObj.enabled = false;
         stateMachine.switchState(EnemyStateMachine.StateType.Wait);

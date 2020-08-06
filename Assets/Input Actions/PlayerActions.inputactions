@@ -1,0 +1,33 @@
+{
+    "name": "PlayerActions",
+    "maps": [
+        {
+            "name": "Player Controls",
+            "id": "e89004b4-f1b4-4f10-b025-1c509c250ec8",
+            "actions": [
+                {
+                    "name": "Camera",
+                    "type": "Value",
+                    "id": "7f4d4821-98aa-49d0-b8a8-423b4de1f433",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": ""
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "d61180c2-e77b-409f-aa88-b3def2c251ee",
+                    "path": "<Mouse>/delta",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Camera",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}

@@ -53,7 +53,7 @@ public class Lerper : MonoBehaviour
             currentPos = Vector3.Lerp(currentTrackableData.position.ToVector(), previousTrackableData.position.ToVector(), previousTrackableData.timeSinceStart - simulationTime);
             currentRot = Quaternion.Lerp(currentTrackableData.rotation.ToQuaternion(), previousTrackableData.rotation.ToQuaternion(), previousTrackableData.timeSinceStart - simulationTime);
         }
-
+        
         gameObject.transform.position = currentPos;
         gameObject.transform.rotation = currentRot;
 
