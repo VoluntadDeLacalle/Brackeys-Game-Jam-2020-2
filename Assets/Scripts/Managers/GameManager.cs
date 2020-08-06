@@ -35,6 +35,9 @@ public class GameManager : MonoBehaviour
     public int totalSpawnedNumber = 0;
     public int currentWaveKilledNumber = 0;
     public int currentWave = 1;
+
+    public int maxAmmo = 3;
+    public int currentAmmo = 0;
     
     void Awake()
     {

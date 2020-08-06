@@ -1,11 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour
 {
+    public Transform target;
     [HideInInspector] public Health health;
-    public bool isAlive;
+    public bool isAlive = true;
 
     void Awake()
     {
@@ -20,5 +22,7 @@ public class Player : MonoBehaviour
         health.OnDeath -= OnPlayerDeath;
         isAlive = false;
         GameManager.instance.lose = true;
+
+        SceneManager.LoadScene(SceneManager.GetActiveScene().ToString());
     }
 }

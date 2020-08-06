@@ -28,7 +28,7 @@ public class EnemyStateMachine : MonoBehaviour
 
     void Update()
     {
-        if (!GameManager.instance.isRewinding)
+        if (!GameManager.instance.isRewinding && GameManager.instance.player.isAlive)
         {
             switch (state)
             {

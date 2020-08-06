@@ -11,6 +11,7 @@ public class EnemyBehavior : MonoBehaviour
     NavMeshAgent nav;
     Rewind rewind;
     EnemyShooting enemyShoot;
+    Animator anim;
 
     public float playerMoveDistance = 0f;
     public float startAttackDistance = 0f;
@@ -28,6 +29,7 @@ public class EnemyBehavior : MonoBehaviour
 
     private Vector3 currentPlayerDestination = Vector3.zero;
 
+    public GameObject Gun;
     private GameObject bulletToDodge;
 
     void Awake()
@@ -40,6 +42,8 @@ public class EnemyBehavior : MonoBehaviour
 
         enemyShoot = GetComponent<EnemyShooting>();
         health = GetComponent<Health>();
+
+        anim = GetComponent<Animator>();
 
         originalNavAccel = nav.acceleration;
         originalNavSpeed = nav.speed;
@@ -70,6 +74,10 @@ public class EnemyBehavior : MonoBehaviour
 
         health.ResetHealth();
         health.OnDeath += OnEnemyDeath;
+
+        Gun.SetActive(false);
+        anim.SetBool("Shooting", false);
+        anim.SetTrigger("DodgeOrWalk");
     }
 
     public void PlayerMovementCheck()
@@ -103,7 +111,11 @@ public class EnemyBehavior : MonoBehaviour
     }
 
     public void WalkingEnter()
-    { }
+    {
+        Gun.SetActive(false);
+        anim.SetBool("Shooting", false);
+        anim.SetTrigger("DodgeOrWalk");
+    }
 
     public void Walking()
     {
@@ -128,6 +140,11 @@ public class EnemyBehavior : MonoBehaviour
     {
         navObj.enabled = true;
         enemyShoot.fireRate = Random.Range(enemyShoot.minFireRate, enemyShoot.maxFireRate);
+
+        Gun.SetActive(true);
+        anim.SetTrigger("StartShoot");
+        anim.SetBool("Shooting", true);
+
     }
 
     public void Attacking()
@@ -155,6 +172,10 @@ public class EnemyBehavior : MonoBehaviour
     {
         startDodging = false;
         oneFrameDodge = false;
+
+        Gun.SetActive(false);
+        anim.SetBool("Shooting", false);
+        anim.SetTrigger("DodgeOrWalk");
     }
 
     public void Dodging()
@@ -231,6 +252,7 @@ public class EnemyBehavior : MonoBehaviour
 
     void EndOfRewind()
     {
+        enemyShoot.canShoot = false;
         startMoving = true;
         stateMachine.switchState(EnemyStateMachine.StateType.Walk);
     }
@@ -260,7 +282,6 @@ public class EnemyBehavior : MonoBehaviour
         {
             health.OnDeath -= OnEnemyDeath;
 
-            Debug.Log("Dead.");
             GameManager.instance.currentWaveKilledNumber++;
             GameManager.instance.currentlyspawnedNumber--;
             isAlive = false;

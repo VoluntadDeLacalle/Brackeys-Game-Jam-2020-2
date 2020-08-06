@@ -213,7 +213,10 @@ public class Rewind : MonoBehaviour
         //this may get refactored later
         if (Input.GetMouseButtonUp(1) && isRewinding)
         {
-            StopRewindTime(Mathf.Clamp(Math.Abs(timeStartedRewinding - maxRewindTime), 0, maxRewindTime));
+            //Commenting this out to try for balance.
+            //StopRewindTime(Mathf.Clamp(Math.Abs(timeStartedRewinding - maxRewindTime), 0, maxRewindTime));
+
+            StopRewindTime(maxRewindTime);
         }
 
         //IF REWIND DOESNT WORK BLAME THIS.

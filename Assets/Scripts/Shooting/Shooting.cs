@@ -25,6 +25,7 @@ public class Shooting : MonoBehaviour
     {
         currentMaxFireRate = fireRate;
         maxAmmo = ammo;
+        GameManager.instance.currentAmmo = ammo;
         maxReloadAmmoTimer = reloadAmmoTimer;
     }
 
@@ -48,6 +49,7 @@ public class Shooting : MonoBehaviour
         if (ammo > 0)
         {
             ammo--;
+            GameManager.instance.currentAmmo = ammo;
         }
     }
 
@@ -61,6 +63,8 @@ public class Shooting : MonoBehaviour
             reloadAmmo = false;
 
             ammo = maxAmmo;
+
+            GameManager.instance.currentAmmo = ammo;
         }
     }
 
@@ -71,7 +75,7 @@ public class Shooting : MonoBehaviour
             fireRate -= Time.deltaTime;
         }
         
-        if (Input.GetMouseButtonDown(0) && fireRate <= 0)
+        if (Input.GetMouseButtonDown(0) && fireRate <= 0 && !GameManager.instance.isRewinding)
         {
             if (ammo > 0 && !reloadAmmo)
             {

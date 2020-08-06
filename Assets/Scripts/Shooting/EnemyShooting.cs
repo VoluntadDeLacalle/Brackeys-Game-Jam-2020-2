@@ -14,19 +14,26 @@ public class EnemyShooting : MonoBehaviour
 
     public Transform bulletHoleTransform;
 
+    [HideInInspector] public bool canShoot = false;
+
     void Awake()
     {
         fireRate = Random.Range(minFireRate, maxFireRate);
     }
 
+    void CanShoot()
+    {
+        canShoot = true;
+    }
+
     public void Fire()
     {
         fireRate -= Time.deltaTime;
-        if (fireRate <= 0)
+        if (fireRate <= 0 && canShoot)
         {
             GameObject obj = ObjectPooler.GetPooler(bulletKey).GetPooledObject();
 
-            Vector3 targetDir = (GameManager.instance.player.transform.position - bulletHoleTransform.position).normalized;
+            Vector3 targetDir = (GameManager.instance.player.target.position - bulletHoleTransform.position).normalized;
             Quaternion targetRotation = Quaternion.LookRotation(targetDir, transform.up);
 
             obj.transform.position = bulletHoleTransform.position;
@@ -38,6 +45,7 @@ public class EnemyShooting : MonoBehaviour
             obj.SetActive(true);
 
             fireRate = Random.Range(minFireRate, maxFireRate);
+            canShoot = false;
         }
     }
 }
